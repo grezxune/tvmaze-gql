@@ -1,7 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { type AppContext } from '../src/context.js';
 import { type RestShowRecord, UpstreamServiceError } from '../src/datasources/tvmaze-api.js';
-import { type ShowGenre } from '../src/modules/show/show.types.js';
 import { createServer } from '../src/server.js';
 
 const lookupQuery = /* GraphQL */ `
@@ -22,33 +21,21 @@ const lookupQuery = /* GraphQL */ `
   }
 `;
 
-const collectionQuery = /* GraphQL */ `
-  query Collection($genre: ShowGenre!, $limit: Int) {
-    showsByGenre(genre: $genre, limit: $limit) {
-      id
-      name
-    }
-  }
-`;
 
 const primary: RestShowRecord = { id: '169', name: 'The Expanse', language: 'English', genreName: 'Drama', ratingAverage: 8.3, genres: ['Drama', 'Science-Fiction', 'Thriller'] };
-const second: RestShowRecord = { id: '618', name: 'Better Call Saul', language: 'English', genreName: 'Drama', ratingAverage: 8.7, genres: ['Drama'] };
-const third: RestShowRecord = { id: '34653', name: 'All American', language: 'English', genreName: 'Drama', ratingAverage: 6.2, genres: ['Drama'] };
 
 const createMockContext = () => {
   const getShowById = vi.fn(async (_id: string) => null as RestShowRecord | null);
-  const getShowsByGenre = vi.fn(async (_genre: ShowGenre) => [] as RestShowRecord[]);
 
   const context: AppContext = {
     dataSources: {
       tvMazeApi: {
         getShowById,
-        getShowsByGenre,
       },
     },
   };
 
-  return { context, getShowById, getShowsByGenre };
+  return { context, getShowById };
 };
 
 const executeSingle = async (query: string, variables: Record<string, unknown>, contextValue: AppContext) => {
@@ -141,39 +128,6 @@ describe('show queries', () => {
           message: 'TVMaze is currently unavailable.',
         },
       },
-    });
-  });
-
-  it('sorts shows by name before applying the limit', async () => {
-    const { context, getShowsByGenre } = createMockContext();
-    getShowsByGenre.mockResolvedValue([second, primary, third]);
-
-    const result = await executeSingle(collectionQuery, { genre: 'DRAMA', limit: 2 }, context);
-
-    expect(result.errors).toBeUndefined();
-    expect(result.data).toEqual({
-      showsByGenre: [
-        {
-          id: '34653',
-          name: 'All American',
-        },
-        {
-          id: '618',
-          name: 'Better Call Saul',
-        },
-      ],
-    });
-  });
-
-  it('treats a negative limit as zero', async () => {
-    const { context, getShowsByGenre } = createMockContext();
-    getShowsByGenre.mockResolvedValue([second, primary, third]);
-
-    const result = await executeSingle(collectionQuery, { genre: 'DRAMA', limit: -3 }, context);
-
-    expect(result.errors).toBeUndefined();
-    expect(result.data).toEqual({
-      showsByGenre: [],
     });
   });
 });

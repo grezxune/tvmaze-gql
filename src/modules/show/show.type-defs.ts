@@ -1,10 +1,4 @@
 export const showTypeDefs = /* GraphQL */ `
-  enum ShowGenre {
-    COMEDY
-    DRAMA
-    SCIENCE_FICTION
-  }
-
   enum ShowLookupErrorCode {
     INVALID_INPUT
     NOT_FOUND
@@ -31,6 +25,5 @@ export const showTypeDefs = /* GraphQL */ `
 
   extend type Query {
     show(id: ID!): ShowLookupResult!
-    showsByGenre(genre: ShowGenre!, limit: Int = 5): [Show!]!
   }
 `;

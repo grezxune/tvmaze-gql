@@ -1,14 +1,10 @@
 import { type AppContext } from '../../context.js';
-import { type ShowLookupResult, type ShowModel, type ShowGenre } from './show.types.js';
+import { type ShowLookupResult, type ShowModel } from './show.types.js';
 
 interface ShowQueryArgs {
   id: string;
 }
 
-interface ShowCollectionQueryArgs {
-  genre: ShowGenre;
-  limit?: number | null;
-}
 
 const normalizeShowId = (id: string): string => id.trim();
 
@@ -24,9 +20,7 @@ export const showResolvers = {
           show: null,
           error: {
             code: 'INVALID_INPUT',
-            message: 'TODO: return a clearer invalid-input message',
-          },
-        };
+            message: 'TODO: return a clearer invalid-input message' } };
       }
 
       // TODO:
@@ -36,16 +30,6 @@ export const showResolvers = {
       // - return the mapped show on success
       throw new Error('TODO: implement Query.show');
     },
-
-    showsByGenre: async (_parent: unknown, _arguments: ShowCollectionQueryArgs, _context: AppContext): Promise<ShowModel[]> => {
-      // TODO:
-      // - fetch shows for the requested genre
-      // - map each DTO into the GraphQL model
-      // - sort by name
-      // - apply limit after sorting
-      // - treat negative limits as 0
-      throw new Error('TODO: implement Query.showsByGenre');
-    },
   },
 
   Show: {
@@ -54,6 +38,4 @@ export const showResolvers = {
       // - derive a readable summary from the mapped ShowModel
       // - include name, id, genre, metric, and detail/fallback
       throw new Error('TODO: implement Show.summary');
-    },
-  },
-};
+    } } };

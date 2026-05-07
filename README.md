@@ -17,7 +17,6 @@ https://api.tvmaze.com
 The schema exposes:
 
 - `show(id: ID!): ShowLookupResult!`
-- `showsByGenre(genre: ShowGenre!, limit: Int = 5): [Show!]!`
 
 The public `Show` type stays intentionally small: `id`, `name`, `detail`, `tags`, and `summary`.
 
@@ -34,8 +33,6 @@ Functional requirements:
 - validate and normalize `id` for `show`
 - return `INVALID_INPUT`, `NOT_FOUND`, and `UPSTREAM_ERROR` in the lookup result when appropriate
 - map REST DTOs into the GraphQL model with null/default/sorted-array handling
-- sort `showsByGenre` results by `name`, then apply `limit`
-- treat negative limits as `0`
 - compute a deterministic `Show.summary`
 
 ## How To Run
